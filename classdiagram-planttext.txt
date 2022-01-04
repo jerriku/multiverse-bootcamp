@@ -1,0 +1,42 @@
+@startuml
+
+title Deliveroo - Class Diagram
+
+class Customer {
+String name
+Number number
+String location
+placeOrder(Order)
+}
+
+class Restaurant {
+String name
+Number number
+String location
+String openingHours
+boolean open
+isOpen()
+isPreparing()
+}
+
+class DeliveryPerson {
+String name
+Number number
+boolean availability
+isAvailable()
+isDelivering()
+}
+
+class Order {
+String id
+Number price
+Object details
+getTotalPrice()
+getDetails()
+}
+
+Customer "*" *-right-> "1" Order : has an
+Restaurant "1" -up- "*" Order
+DeliveryPerson "1" -up- "*" Order
+
+@enduml
