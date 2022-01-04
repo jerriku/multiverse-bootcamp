@@ -1,0 +1,24 @@
+@startuml
+
+title "Deliveroo - Sequence Diagram for searching restaurants"
+
+actor Customer
+
+Customer -> Deliveroo_UI : enter location
+Deliveroo_UI -> Deliveroo_API : locationExist(location)
+
+database Database
+Deliveroo_API -> Database : locationExist(location)
+alt if location exists
+  Database --> Deliveroo_API : location VALID
+  Deliveroo_API -> Database : requestRestaurants(location)
+  Database --> Deliveroo_API : return restaurants
+  Deliveroo_API --> Deliveroo_UI
+  Deliveroo_UI --> Customer : display restaurants
+else elseif location does not exist
+  Database --> Deliveroo_API : location INVALID
+  Deliveroo_API --> Deliveroo_UI
+  Deliveroo_UI --> Customer : promt incorrect location
+end
+
+@enduml
