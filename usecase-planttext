@@ -1,0 +1,54 @@
+@startuml
+
+left to right direction
+
+title Deliveroo - Use Case Diagram
+actor :Customer: as C
+actor :Restaurant: as R
+actor :Delivery Person: as D
+
+rectangle CustomerApp {
+usecase (Create order)
+usecase (Place order)
+usecase (View order)
+usecase (Pay for order)
+usecase (Cancel order)
+}
+
+C --> (Create order)
+C --> (Place order)
+C --> (View order)
+C --> (Pay for order)
+C --> (Cancel order)
+
+rectangle RestaurantApp {
+usecase (View customer order)
+usecase (Take customer order)
+usecase (Prepare order)
+usecase (Contact customer)
+usecase (Contact delivery person)
+usecase (Deliver order)
+}
+
+R --> (View customer order)
+R --> (Take customer order)
+R --> (Prepare order)
+R --> (Contact customer)
+R --> (Contact delivery person)
+R --> (Deliver order)
+
+rectangle DeliveryApp {
+usecase (View available requests)
+usecase (Take request)
+usecase (Check map)
+usecase (Contact customer)
+usecase (Contact restaurant)
+}
+
+
+D --> (View available requests)
+D --> (Take request)
+D --> (Check map)
+D --> (Contact customer)
+D --> (Contact restaurant)
+@enduml
