@@ -1,0 +1,15 @@
+{
+  "name": "bc-w1d2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^27.4.7",
+    "typescript": "^4.5.4"
+  }
+}
