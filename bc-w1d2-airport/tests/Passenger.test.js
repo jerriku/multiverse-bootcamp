@@ -1,5 +1,5 @@
-const Passenger = require('../classesTS/Passenger');
-const Bag = require('../classesTS/Bag');
+const Passenger = require('../classesJS/Passenger');
+const Bag = require('../classesJS/Bag');
 
 describe('Passenger', function() {
 

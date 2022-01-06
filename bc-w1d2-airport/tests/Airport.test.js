@@ -1,4 +1,4 @@
-const Airport = require('../classesTS/Airport');
+const Airport = require('../classesJS/Airport');
 
 describe('Airport', function() {
 

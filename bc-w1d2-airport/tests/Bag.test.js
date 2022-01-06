@@ -1,4 +1,4 @@
-const Bag = require('../classesTS/Bag');
+const Bag = require('../classesJS/Bag');
 
 describe('Bag', function() { //bag suite
 

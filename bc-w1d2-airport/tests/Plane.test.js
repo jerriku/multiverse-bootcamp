@@ -1,4 +1,4 @@
-const Plane = require('../classesTS/Plane');
+const Plane = require('../classesJS/Plane');
 
 describe('Plane', function() {
     

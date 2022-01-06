@@ -1,5 +1,5 @@
-const CrewMember = require('../classesTS/CrewMember');
-const Bag = require('../classesTS/Bag');
+const CrewMember = require('../classesJS/CrewMember');
+const Bag = require('../classesJS/Bag');
 
 describe('CrewMember', function() {
     
