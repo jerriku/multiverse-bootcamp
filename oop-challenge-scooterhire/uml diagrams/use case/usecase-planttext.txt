@@ -1,0 +1,57 @@
+@startuml
+
+left to right direction
+
+title "Scooter Hire System"
+
+actor Scooter
+actor User
+actor MaintenancePersonnel
+actor CustomerService
+actor CardIssuer
+actor Paypal
+actor GooglePay
+actor ChargingStation
+
+rectangle ElectricScooterApp {
+  usecase (Register)
+  usecase (Log in/Log out)
+  usecase (Rent a scooter)
+  usecase (Report the scooter)
+  usecase (Request customer service)
+  usecase (Pay)
+  
+  usecase (View broken scooters)
+}
+
+User --> (Register)
+User --> (Log in/Log out)
+User --> (Rent a scooter)
+User --> (Report the scooter)
+User --> (Request customer service)
+User --> (Pay)
+
+(Rent a scooter) --> Scooter
+
+(Request customer service) --> CustomerService
+
+(Pay) --> CardIssuer
+(Pay) --> Paypal
+(Pay) --> GooglePay
+
+MaintenancePersonnel --> (View broken scooters)
+(View broken scooters) <-- CustomerService
+
+rectangle ScooterSystem {
+  usecase (Charge)
+  usecase (Lock/Unlock)
+  usecase (Change speed)
+}
+
+Scooter --> (Charge)
+Scooter --> (Lock/Unlock)
+
+(Charge) --> ChargingStation
+
+
+@enduml

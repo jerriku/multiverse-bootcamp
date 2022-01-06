@@ -1,0 +1,66 @@
+@startuml
+
+class Account {
+String name
+Number age
+String username
+String email
+String password
+register()
+login()
+checkAge()
+}
+
+class User {
+String name
+Number age
+rent(Scooter)
+}
+
+class Scooter {
+String id
+Number battery
+Boolean availability
+Boolean damaged
+
+isAvailable()
+isDamaged()
+}
+
+class MaintenancePersonnel {
+}
+
+class ChargingStation {
+Array scooters
+}
+
+class CustomerSupport {
+}
+
+class PaymentMethod {
+pay()
+}
+
+class GooglePayPayment {
+}
+
+class CardPayment {
+}
+
+
+class PaypalPayment {
+}
+
+User "1"-down-"1" PaymentMethod : pays for rent using
+User "1"-up-"1..*" Account : creates
+User "1"-left-"*" Scooter : rents
+User "1"-right-"*" CustomerSupport : reports issues to
+
+Scooter "*"-left-"*" ChargingStation : charges at
+Scooter "*"-up-"*" MaintenancePersonnel : maintains
+
+PaymentMethod <|-down- GooglePayPayment
+PaymentMethod <|-down- CardPayment
+PaymentMethod <|-down- PaypalPayment
+
+@enduml

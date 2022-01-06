@@ -6,7 +6,8 @@ class Bag {
         this.weight = weight;
     }
     isOverLimit() {
-        return this.weight > 23;
+        return this.weight > Bag.LIMIT;
     }
 }
+Bag.LIMIT = 23;
 module.exports = Bag;

@@ -6,6 +6,11 @@ describe('Bag', function() { //bag suite
         const bag = new Bag(15);
         expect(bag.weight).toBe(15);
     });
+    
+    test('weight is a number', function() {
+        const bag = new Bag(15);
+        expect(typeof(bag.weight)).toBe("number");
+    });
 
     test('overweight bag', function() {
         const bag = new Bag(25);
@@ -18,6 +23,6 @@ describe('Bag', function() { //bag suite
     });
 
     test('bag has no weight', function() {
-        expect(() => Bag()).toThrowError();
+        expect(() => new Bag()).toThrowError("You must provide a weight.");
     });
 });

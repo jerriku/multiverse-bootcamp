@@ -1,7 +1,13 @@
 const CrewMember = require('../classesJS/CrewMember');
 const Bag = require('../classesJS/Bag');
+const Person = require('../classesJS/Person');
 
 describe('CrewMember', function() {
+
+    test('is an instance of a Person', function() {
+        const crew = new CrewMember("John", "Pilot", 1);
+        expect(crew instanceof Person).toBeTruthy();
+    });
     
     test('crew member has a name', function() {
         const crew = new CrewMember("John", "Pilot", 1);

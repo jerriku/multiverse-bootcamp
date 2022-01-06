@@ -1,13 +1,13 @@
 "use strict";
-class CrewMember {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+const Person_1 = __importDefault(require("./Person"));
+class CrewMember extends Person_1.default {
     constructor(name, position, staffNumber) {
-        this.name = name;
+        super(name);
         this.position = position;
         this.staffNumber = staffNumber;
-        this.bags = [];
-    }
-    addBag(bag) {
-        this.bags.push(bag);
     }
 }
 module.exports = CrewMember;

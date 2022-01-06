@@ -1,7 +1,13 @@
 const Passenger = require('../classesJS/Passenger');
 const Bag = require('../classesJS/Bag');
+const Person = require('../classesJS/Person');
 
 describe('Passenger', function() {
+
+    test('is an instance of a Person', function() {
+        const passenger = new Passenger("Jeric", "P1234", "S56");
+        expect(passenger instanceof Person).toBeTruthy();
+    });
 
     test('passeger has a name', function() {
         const passenger = new Passenger("Jeric", "P1234", "S56");
