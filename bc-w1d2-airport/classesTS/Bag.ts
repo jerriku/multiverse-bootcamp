@@ -2,6 +2,7 @@ class Bag {
     
     //properties
     weight : number;
+    static LIMIT: number = 23;
 
     constructor(weight: number) {
         if (!weight) throw new Error("You must provide a weight.");
@@ -9,7 +10,7 @@ class Bag {
     }
 
     isOverLimit(): boolean {
-        return this.weight > 23;
+        return this.weight > Bag.LIMIT;
     }
 }
 

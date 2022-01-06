@@ -1,22 +1,16 @@
 import Bag from './Bag';
+import Person from './Person';
 
-class CrewMember {
+class CrewMember extends Person{
 
     //properties
-    name: string;
     position: string;
     staffNumber: number;
-    bags: Bag[];
 
     constructor(name: string, position: string, staffNumber: number) {
-        this.name = name;
+        super(name);
         this.position = position;
         this.staffNumber = staffNumber;
-        this.bags = []
-    }
-
-    addBag(bag: Bag): void {
-        this.bags.push(bag);
     }
 }
 
