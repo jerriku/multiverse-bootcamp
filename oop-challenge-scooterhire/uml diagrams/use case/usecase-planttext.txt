@@ -7,7 +7,6 @@ title "Scooter Hire System"
 actor Scooter
 actor User
 actor MaintenancePersonnel
-actor CustomerService
 actor CardIssuer
 actor Paypal
 actor GooglePay
@@ -17,36 +16,35 @@ rectangle ElectricScooterApp {
   usecase (Register)
   usecase (Log in/Log out)
   usecase (Rent a scooter)
-  usecase (Report the scooter)
-  usecase (Request customer service)
+  usecase (Report broken scooter)
   usecase (Pay)
   
-  usecase (View broken scooters)
+  usecase (View scooter location)
 }
 
 User --> (Register)
 User --> (Log in/Log out)
 User --> (Rent a scooter)
-User --> (Report the scooter)
-User --> (Request customer service)
+User --> (Report broken scooter)
+User --> (View scooter location)
 User --> (Pay)
 
 (Rent a scooter) --> Scooter
 
-(Request customer service) --> CustomerService
 
 (Pay) --> CardIssuer
 (Pay) --> Paypal
 (Pay) --> GooglePay
 
-MaintenancePersonnel --> (View broken scooters)
-(View broken scooters) <-- CustomerService
+(Report broken scooter) --> MaintenancePersonnel
+MaintenancePersonnel --> (View scooter location)
 
 rectangle ScooterSystem {
   usecase (Charge)
   usecase (Lock/Unlock)
   usecase (Change speed)
 }
+
 
 Scooter --> (Charge)
 Scooter --> (Lock/Unlock)

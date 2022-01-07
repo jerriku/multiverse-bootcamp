@@ -20,9 +20,12 @@ rent(Scooter)
 class Scooter {
 String id
 Number battery
+Number speed
+Number speedLimit
 Boolean availability
 Boolean damaged
 
+isOverSpeedLimit()
 isAvailable()
 isDamaged()
 }
@@ -31,10 +34,10 @@ class MaintenancePersonnel {
 }
 
 class ChargingStation {
-Array scooters
-}
-
-class CustomerSupport {
+Array availableScooters
+Array brokenScooters
+Array scootersAway
+Array scootersToCharge
 }
 
 class PaymentMethod {
@@ -52,12 +55,13 @@ class PaypalPayment {
 }
 
 User "1"-down-"1" PaymentMethod : pays for rent using
-User "1"-up-"1..*" Account : creates
+User "1"-right-"1..*" Account : creates
 User "1"-left-"*" Scooter : rents
-User "1"-right-"*" CustomerSupport : reports issues to
+User "1"-up-"*" MaintenancePersonnel : reports broken scooters to
 
 Scooter "*"-left-"*" ChargingStation : charges at
 Scooter "*"-up-"*" MaintenancePersonnel : maintains
+MaintenancePersonnel "*"-left-"*" ChargingStation : takes scooter from
 
 PaymentMethod <|-down- GooglePayPayment
 PaymentMethod <|-down- CardPayment

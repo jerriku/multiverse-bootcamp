@@ -1,0 +1,28 @@
+@startuml
+
+title "E-Scooter Hire - Sequence Diagram for Registering"
+
+actor User
+
+User -> ScooterHire_UI : Visit
+ScooterHire_UI -> User :promt to register or login
+User --> ScooterHire_UI : register
+ScooterHire_UI -> User :promt to enter details
+User --> ScooterHire_UI : enter details
+ScooterHire_UI -> LoginAPI : register(details)
+LoginAPI -> LoginAPI : checkIfValid(details)
+
+database Database
+LoginAPI -> Database
+
+alt if details are valid
+  LoginAPI -> Database : saveData(details)
+  LoginAPI <-- Database : details saved
+  LoginAPI --> ScooterHire_UI
+  ScooterHire_UI -> User : registration successful
+else elseif details are invalid
+  LoginAPI --> ScooterHire_UI : invalid details sent
+  ScooterHire_UI -> User : tell user to enter valid details
+end
+  
+@enduml
