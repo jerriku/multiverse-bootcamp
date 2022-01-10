@@ -1,6 +1,5 @@
 const User = require('../classesJS/User');
 const Scooter = require('../classesJS/Scooter');
-const Account = require('../classesJS/Account');
 
 describe('User', function() {
 
@@ -52,5 +51,14 @@ describe('User', function() {
     test('is not old enough to register an account', function() {
         const user = new User("Jeric", 15);
         expect(user.register("email@address.com", "username123", "password456")).toBe("Registration cancelled, age does not meet the requirement.");
+    });
+
+    test('can have multiple accounts', function() {
+        const user = new User("Jeric", 23);
+
+        user.register("email@address.com", "username123", "password456");
+        user.register("address@email.com", "username456", "password123");
+        user.register("emailaddress@email.co.uk", "username789", "password0");
+        expect(user.accounts.length).toBe(3);
     });
 });
