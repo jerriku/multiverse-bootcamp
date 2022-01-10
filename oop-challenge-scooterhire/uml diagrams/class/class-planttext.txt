@@ -24,10 +24,14 @@ Number speed
 Number speedLimit
 Boolean availability
 Boolean damaged
+Boolean locked
 
 isOverSpeedLimit()
 isAvailable()
-isDamaged()
+isLocked()
+lock()
+unlock()
+reportDamaged()
 }
 
 class MaintenancePersonnel {
@@ -38,9 +42,14 @@ Array availableScooters
 Array brokenScooters
 Array scootersAway
 Array scootersToCharge
+charge()
 }
 
 class PaymentMethod {
+string cardName
+number cardNumber
+string expiryDate
+number cardCVV
 pay()
 }
 

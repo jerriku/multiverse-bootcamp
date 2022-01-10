@@ -1,0 +1,16 @@
+{
+  "name": "oop-challenge-scooterhire",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:report": "jest --coverage=true"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^27.4.7",
+    "typescript": "^4.5.4"
+  }
+}

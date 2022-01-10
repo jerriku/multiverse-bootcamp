@@ -1,0 +1,26 @@
+@startuml
+
+title "E-Scooter Hire - Sequence Diagram for Hiring a Scooter"
+
+actor User
+
+User -> Scooter_UI : type in hire code
+Scooter_UI -> ScooterHire_API : checkCode(hireCode)
+ScooterHire_API -> ScooterHire_API : checkCode(hireCode)
+
+alt if VALID
+  ScooterHire_API -> ScooterHire_API : isScooterDamaged(Scooter)
+  alt if DAMAGED
+    ScooterHire_API --> Scooter_UI
+    Scooter_UI --> User : prompt user about damaged scooter
+  else elseif NOT DAMAGED
+    ScooterHire_API --> Scooter_UI : unlock scooter
+    Scooter_UI --> User : promt user that scooter is unlocked
+  end
+else elseif INVALID
+  ScooterHire_API --> Scooter_UI
+  Scooter_UI --> User : prompt user about invalid code
+    
+end
+  
+@enduml
