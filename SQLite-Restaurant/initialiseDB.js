@@ -1,6 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
 
-
 function initialise() {
     const db = new sqlite3.Database('./restaurants.db', (err) => {
         if (err) {

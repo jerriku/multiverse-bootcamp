@@ -21,7 +21,7 @@ try {
         //     console.log(rows);
         // });
         
-        db.each(`SELECT MENUS.title, RESTAURANTS.name AS restaurantname, MENUITEMS.name
+        db.each(`SELECT RESTAURANTS.name AS Restaurant, MENUS.title AS Menu, MENUITEMS.name AS Item
                  FROM RESTAURANTS
                  JOIN MENUS ON RESTAURANTS.id = MENUS.restaurant_id 
                  JOIN MENUITEMS ON MENUS.id = MENUITEMS.menu_id`, (err, rows) => {
