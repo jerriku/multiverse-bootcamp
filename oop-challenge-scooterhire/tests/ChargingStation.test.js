@@ -1,5 +1,5 @@
 const ChargingStation = require('../classesJS/ChargingStation');
-const Scooter = require('../classesJS/ChargingStation');
+const Scooter = require('../classesJS/Scooter');
 
 describe('ChargingStation', function() {
 
@@ -95,7 +95,7 @@ describe('ChargingStation', function() {
         chargingStation.addAvailableScooter(scooterTwo);
         chargingStation.addAvailableScooter(scooterThree);
         chargingStation.addAvailableScooter(scooterFour);
-        console.log(chargingStation);
+        
         chargingStation.removeAvailableScooter(scooterThree);
         expect(chargingStation.availableScooters.length).toBe(3);
     });

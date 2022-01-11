@@ -1,9 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-const Scooter_1 = __importDefault(require("./Scooter"));
 class ChargingStation {
+    /**
+     *
+     * @param location location of the charging station
+     * @param totalScooters total number of scooters in the charging station
+     */
     constructor(location, totalScooters) {
         this.availableScooters = [];
         this.brokenScooters = [];
@@ -12,9 +13,20 @@ class ChargingStation {
         this.location = location;
         this.totalScooters = totalScooters;
     }
-    charge(scooter) {
-        return scooter;
-    }
+    // async charge(): Promise<void> {
+    //     if (this.scootersToCharge.length < 1) console.log("No scooters to charge.");
+    //     else {
+    //         console.log("Starting to charge..");
+    //         await new Promise(resolve => {
+    //             this.scootersToCharge.forEach(async scooter => {
+    //                 // this is to simulate how long it would take to charge per scooter.
+    //                 scooter.battery = 100;
+    //                 setTimeout(resolve, 2000);
+    //             });
+    //         });
+    //         console.log("Done charging");
+    //     }
+    // }
     addBrokenScooter(scooter) {
         this.brokenScooters.push(scooter);
     }
@@ -34,16 +46,4 @@ class ChargingStation {
         this.scootersAway = this.scootersAway.filter(awayScooter => awayScooter.id !== scooter.id);
     }
 }
-const chargingStation = new ChargingStation("Holborn WC1V", 10);
-const scooterOne = new Scooter_1.default("ABC123");
-const scooterTwo = new Scooter_1.default("DEF456");
-const scooterThree = new Scooter_1.default("GHI789");
-const scooterFour = new Scooter_1.default("JKL101112");
-chargingStation.addAvailableScooter(scooterOne);
-chargingStation.addAvailableScooter(scooterTwo);
-chargingStation.addAvailableScooter(scooterThree);
-chargingStation.addAvailableScooter(scooterFour);
-console.log(chargingStation);
-chargingStation.removeAvailableScooter(scooterThree);
-console.log(chargingStation.availableScooters.length);
 module.exports = ChargingStation;

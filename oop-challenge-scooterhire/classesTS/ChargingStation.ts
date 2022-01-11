@@ -9,15 +9,30 @@ class ChargingStation {
     brokenScooters: Scooter[] = [];
     scootersAway: Scooter[] = [];
     scootersToCharge: Scooter[] = [];
-
+    /**
+     * 
+     * @param location location of the charging station
+     * @param totalScooters total number of scooters in the charging station
+     */
     constructor(location: string, totalScooters: number) {
         this.location = location;
         this.totalScooters = totalScooters;
     }
 
-    charge(scooter: Scooter): Scooter {
-        return scooter;
-    }
+    // async charge(): Promise<void> {
+    //     if (this.scootersToCharge.length < 1) console.log("No scooters to charge.");
+    //     else {
+    //         console.log("Starting to charge..");
+    //         await new Promise(resolve => {
+    //             this.scootersToCharge.forEach(async scooter => {
+    //                 // this is to simulate how long it would take to charge per scooter.
+    //                 scooter.battery = 100;
+    //                 setTimeout(resolve, 2000);
+    //             });
+    //         });
+    //         console.log("Done charging");
+    //     }
+    // }
 
     addBrokenScooter(scooter: Scooter): void {
         this.brokenScooters.push(scooter);
@@ -43,19 +58,5 @@ class ChargingStation {
         this.scootersAway = this.scootersAway.filter(awayScooter => awayScooter.id !== scooter.id);
     }
 }
-
-
-const chargingStation = new ChargingStation("Holborn WC1V", 10);
-const scooterOne = new Scooter("ABC123");
-const scooterTwo = new Scooter("DEF456");
-const scooterThree = new Scooter("GHI789");
-const scooterFour = new Scooter("JKL101112");
-chargingStation.addAvailableScooter(scooterOne);
-chargingStation.addAvailableScooter(scooterTwo);
-chargingStation.addAvailableScooter(scooterThree);
-chargingStation.addAvailableScooter(scooterFour);
-console.log(chargingStation);
-chargingStation.removeAvailableScooter(scooterThree);
-console.log(chargingStation.availableScooters.length);
 
 export = ChargingStation;
