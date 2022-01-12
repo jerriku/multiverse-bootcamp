@@ -17,7 +17,7 @@ function initialise(restaurants) {
     try {
         db.serialize(() => {
             let restaurantInserts, menuInserts, menuItemInserts;
-            try{
+            try {
                 restaurantInserts = db.prepare('INSERT INTO RESTAURANTS (name, imagelink) VALUES (?, ?)');
                 menuInserts = db.prepare('INSERT INTO MENUS (title, restaurant_id) VALUES (?, ?)');
                 menuItemInserts = db.prepare('INSERT INTO MENUITEMS (name, price, menu_id) VALUES (?, ?, ?)');
@@ -66,6 +66,9 @@ function initialise(restaurants) {
         });
     }
 }
+function loadAndInsert() {
+    load().then(restaurants => initialise(restaurants))
+          .catch(error => console.error(error.message));
+}
 
-load().then(restaurants => initialise(restaurants))
-      .catch(error => console.error(error.message));
+module.exports = loadAndInsert;
