@@ -1,65 +1,58 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 const sqlite3 = require('sqlite3').verbose();
 const fsp = require('fs').promises;
+
 class RestaurantDAO {
-    constructor(file, data) {
+    private data: string;
+    private file: string;
+
+    constructor(file: string, data: string) {
         this.data = data;
         this.file = file;
     }
-    initialise() {
-        const db = new sqlite3.Database(this.data, (error) => {
-            if (error)
-                return console.error(error.message);
+
+    initialise(): void {
+        const db = new sqlite3.Database(this.data, (error: Error) => {
+            if (error) return console.error(error.message);
         });
+
         try {
             db.serialize(() => {
                 db.exec(`CREATE TABLE IF NOT EXISTS RESTAURANTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, imagelink TEXT)`);
                 db.exec(`CREATE TABLE IF NOT EXISTS MENUS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, restaurant_id INTEGER, FOREIGN KEY (restaurant_id) REFERENCES RESTAURANTS(id))`);
                 db.exec(`CREATE TABLE IF NOT EXISTS MENUITEMS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price REAL, menu_id INTEGER, FOREIGN KEY (menu_id) REFERENCES MENUS(id))`);
             });
-        }
-        finally {
-            db.close((error) => {
-                if (error)
-                    return console.error(error.message);
+        } finally {
+            db.close((error: Error) => {
+                if (error) return console.error(error.message);
             });
         }
     }
-    load() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const buffer = yield fsp.readFile(this.file);
-            return JSON.parse(String(buffer));
-        });
+
+    async load(): Promise<any> {
+        const buffer: any = await fsp.readFile(this.file);
+        return JSON.parse(String(buffer));
     }
-    populateTable(restaurantsData) {
-        const db = new sqlite3.Database(this.data, (error) => {
-            if (error)
-                return console.error(error.message);
+
+    populateTable(restaurantsData: []): void {
+        const db = new sqlite3.Database(this.data, (error: Error) => {
+            if (error) return console.error(error.message);
         });
-        let restaurants;
-        let menus;
-        let menuItems;
+        
+        let restaurants: Array<{ name: number, image: string, menus: []}>;
+        let menus: Array<{ title: string, items: []}>
+        let menuItems: Array<{ name: string, price: number}>
         restaurants = restaurantsData;
         try {
             db.serialize(() => {
-                let restaurantStmt, menuStmt, menuItemStmt;
+                let restaurantStmt: any, menuStmt: any, menuItemStmt: any;
                 try {
                     restaurantStmt = db.prepare('INSERT INTO RESTAURANTS (name, imagelink) VALUES (?, ?)');
                     menuStmt = db.prepare('INSERT INTO MENUS (title, restaurant_id) VALUES (?, ?)');
                     menuItemStmt = db.prepare('INSERT INTO MENUITEMS (name, price, menu_id) VALUES (?, ?, ?)');
-                    let restaurant_id = 1;
-                    let menu_id = 1;
+                    let restaurant_id: number = 1;
+                    let menu_id:number  = 1;
                     restaurants.forEach(restaurant => {
-                        restaurantStmt.run(restaurant.name, restaurant.image);
+                        restaurantStmt.run(restaurant.name, restaurant.image)
                         menus = restaurant.menus;
                         menus.forEach(menu => {
                             menuStmt.run(menu.title, restaurant_id);
@@ -71,44 +64,44 @@ class RestaurantDAO {
                         });
                         restaurant_id++;
                     });
-                }
-                finally {
+                } finally {
                     restaurantStmt.finalize();
                     menuStmt.finalize();
                     menuItemStmt.finalize();
                 }
             });
-        }
-        finally {
-            db.close((error) => {
-                if (error)
-                    return console.error(error.message);
+        } finally {
+            db.close((error: Error) => {
+                if (error) return console.error(error.message);
             });
         }
     }
-    populate() {
+
+    populate(): void {
         this.load().then(restaurants => this.populateTable(restaurants))
-            .catch(error => console.error(error.message));
+                   .catch(error => console.error(error.message));
     }
-    getFile() {
+
+    getFile(): string {
         return this.file;
     }
-    getData() {
+
+    getData(): string {
         return this.data;
     }
-    check(sql_expression) {
-        const db = new sqlite3.Database(this.data, (error) => {
-            if (error)
-                return console.error(error.message);
+
+    check(sql_expression: string): [] {
+        const db = new sqlite3.Database(this.data, (error: Error) => {
+            if (error) return console.error(error.message);
         });
         let result;
         try {
             result = db.each(sql_expression);
-        }
-        finally {
+        } finally {
             db.close();
             return result;
         }
     }
 }
-module.exports = RestaurantDAO;
+
+export = RestaurantDAO;
