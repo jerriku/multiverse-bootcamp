@@ -8,17 +8,11 @@ const fs = require('fs').promises;
 const app = express();
 const port = 3000;
 
-
-const createTable = async() => {
-    await sequelize.sync({ force: true });
-}
-
 const load = async() => {
     const buffer = await fs.readFile('./restaurants.json');
-    return JSON.parse(String(buffer));
-}
+    const restaurants = JSON.parse(String(buffer));
+    await sequelize.sync({ force: true });
 
-const populate = async(restaurants) => {
     let restaurant_id = 1;
     let menu_id = 1;
     for (let i = 0; i < restaurants.length; i++) {
@@ -39,13 +33,7 @@ const populate = async(restaurants) => {
 
 }
 
-createTable().then(() => {
-    load()
-    .then(response => {
-        populate(response);
-    })
-    .catch(error => console.error(error.message));
-})
+load()
 .catch(error => console.error(error.message));
 
 app.use(express.static('src'));
