@@ -6,8 +6,11 @@ async function start() {
         dao.initialise();
         await dao.createTable();
         await dao.populate();
-        const result = dao.check("SELECT * FROM MENUS");
-        console.log(result);
+        dao.check(`SELECT Restaurants.name AS Restaurant, Menus.title AS Menu, MenuItems.name AS Item
+                   FROM Restaurants
+                   JOIN Menus ON Restaurants.id = Menus.restaurant_id
+                   JOIN MenuItems ON Menus.id = MenuItems.menu_id`
+        );
     } finally {
         dao.close();
     }

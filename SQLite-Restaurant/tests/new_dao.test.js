@@ -1,20 +1,55 @@
-const sqlite3 = require('sqlite3').verbose();
-const RestaurantDAO = require('../js/new_dao');
-const restaurant_dao = new RestaurantDAO('./restaurants.db', './restaurants.json');
+// const sqlite3 = require('sqlite3').verbose();
+// const RestaurantDAO = require('../js/dao');
+// const restaurant_dao = new RestaurantDAO('./restaurants.db', './restaurants.json');
 
-describe('Sqlite3', () => {
-    beforeAll(async () => {
-        restaurant_dao.initialise();
-        await restaurant_dao.createTable();
-        await restaurant_dao.populate();
-    });
+// describe('Sqlite3', () => {
+//     beforeEach( () => {
+//         restaurant_dao.initialise();
+//         restaurant_dao.createTable();
+//         restaurant_dao.populate();
+//     });
 
-    afterAll(() => {
-        restaurant_dao.close();
-    })
+//     afterEach(() => {
+//         restaurant_dao.close();
+//     })
 
-    test('can load restaurants into the database', async () => {
-        const result = await restaurant_dao.check("SELECT * FROM RESTAURANTS");
-        expect(result.length).toBe(8);
-    });
-});
+//     test('can load restaurants into the database', (done) => {
+//         const db = new sqlite3.Database('./restaurants.db');
+
+//         try {
+//             db.get("SELECT count(*) FROM restaurants",
+//                 function (err, rows) {
+//                     if (err) {
+//                         console.log(err)
+//                     } else {
+//                         //console.log(rows);
+//                         expect(rows['count(*)']).toBe(8);
+//                     }
+//                     done();
+//                 })
+//         } finally {
+//             db.close();
+//             done();
+//         }
+//     });
+
+//     // test('can load database from in memory', (done) => {
+//     //     const db = new sqlite3.Database(':memory:');
+
+//     //     try {
+//     //         db.get("SELECT count(*) FROM restaurants",
+//     //             function (err, rows) {
+//     //                 if (err) {
+//     //                     console.log(err)
+//     //                 } else {
+//     //                     //console.log(rows);
+//     //                     expect(rows['count(*)']).toBe(9);
+//     //                 }
+//     //                 done();
+//     //             })
+//     //     } finally {
+//     //         db.close();
+//     //         done();
+//     //     }
+//     // })
+// });

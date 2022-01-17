@@ -5,7 +5,7 @@ class DataAccessObject {
     data: string = "";
     file: string = "";
     database: any;
-    
+    items: any[] = [];
 
     constructor(data: string, file: string) {
         if(!data || !file) return;
@@ -30,67 +30,60 @@ class DataAccessObject {
         );
     }
 
-    async populate(): Promise<any> {
+    async populate(): Promise<void> {
         if(!this.database) return;
         let restaurants: Array<{ name: number, image: string, menus: []}>;
         let menus: Array<{ title: string, items: []}>
         let menuItems: Array<{ name: string, price: number}>
-
-        const buffer = await fsp.readFile(this.file);
-        restaurants = JSON.parse(String(buffer));
         
-        this.database.serialize(() => {
-
-            let restaurant_id = 1;
-            let menu_id = 1;
+        let promise: Promise<any[]> = new Promise((resolve, reject) => {
+            const buffer = fsp.readFile(this.file);
+            resolve(JSON.parse(String(buffer)));
+        });
+        restaurants = await promise;
+        let restaurant_id = 1;
+        let menu_id = 1;
+        
+        restaurants.forEach(restaurant => {
+            this.database.run(
+                'INSERT INTO RESTAURANTS (name, imagelink) VALUES (?, ?)',
+                restaurant.name,
+                restaurant.image
+            );
+            menus = restaurant.menus;
             
-            restaurants.forEach(restaurant => {
+            menus.forEach(menu => {
                 this.database.run(
-                    'INSERT INTO RESTAURANTS (name, imagelink) VALUES (?, ?)',
-                    restaurant.name,
-                    restaurant.image
+                    'INSERT INTO MENUS (title, restaurant_id) VALUES (?, ?)',
+                    menu.title,
+                    restaurant_id
                 );
-                menus = restaurant.menus;
-                
-                menus.forEach(menu => {
+                menuItems = menu.items;
+
+                menuItems.forEach(item => {
                     this.database.run(
-                        'INSERT INTO MENUS (title, restaurant_id) VALUES (?, ?)',
-                        menu.title,
-                        restaurant_id
+                        'INSERT INTO MENUITEMS (name, price, menu_id) VALUES (?, ?, ?)',
+                        item.name,
+                        item.price,
+                        menu_id
                     );
-                    menuItems = menu.items;
-
-                    menuItems.forEach(item => {
-                        this.database.run(
-                            'INSERT INTO MENUITEMS (name, price, menu_id) VALUES (?, ?, ?)',
-                            item.name,
-                            item.price,
-                            menu_id
-                        );
-                    })
-                    menu_id++;
-                });
-                restaurant_id++;
-            })
-
+                })
+                menu_id++;
+            });
+            restaurant_id++;
+        })
+    }
+    
+    check(expr: string): void {
+        this.database.all(expr, (err: Error, rows: any) => {
+            console.log(rows);
         });
     }
 
-    check(expr: string): any[] {
-        let file: any[] = [];
-        try {
-            this.database.all(expr, (err:Error, row: any) => {
-                file.push(row);
-                console.log(file);
-            });
-        } finally {
-            console.log(file);
-            return file;
-        }
-    }
-
     close(): void {
-        this.database.close();
+        this.database.close((err: Error) => {
+            if (err) return console.error(err.message)
+        });
     }
 }
 
