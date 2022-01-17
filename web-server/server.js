@@ -61,12 +61,12 @@ app.get("/flipcoin", (request, response) => {
 });
 
 app.get("/restaurants", async (request, response) => {
-    const restaurants = await Restaurant.findAll();
+    const restaurants = await Restaurant.findAll({ include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
     response.json(restaurants);
 });
 
-app.get("/restaurants/:id", async (request, response) => {
-    const restaurants = await Restaurant.findAll();
+app.get("/restaurants/id=:id", async (request, response) => {
+    const restaurants = await Restaurant.findByPk(request.params.id, { include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
     response.json(restaurants);
 });
 
