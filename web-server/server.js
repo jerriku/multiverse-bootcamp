@@ -38,6 +38,10 @@ load()
 
 app.use(express.static('src'));
 
+app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json());
+
 app.get("/now", (request, response) => {
     const date = new Date();
     response.send(date);
@@ -54,8 +58,48 @@ app.get("/restaurants", async (request, response) => {
 });
 
 app.get("/restaurants/id=:id", async (request, response) => {
-    const restaurants = await Restaurant.findByPk(request.params.id, { include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
-    response.json(restaurants);
+    const restaurant = await Restaurant.findByPk(request.params.id, { include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
+    response.json(restaurant);
+});
+
+app.post("/restaurants", async (request, response) => {
+    if (!request.body.name || !request.body.image) return response.sendStatus(400);
+    await Restaurant.create({name: request.body.name, image: request.body.image});
+    response.sendStatus(201);
+});
+
+app.post("/restaurants/menus", async (request, response) => {
+    if (!request.body.title || !request.body.restaurant_id) return response.sendStatus(400);
+    await Menu.create({title: request.body.title, restaurant_id: request.body.restaurant_id});
+    response.sendStatus(201);
+});
+
+app.post("/restaurants/menus/items", async (request, response) => {
+    if (!request.body.name || !request.body.price || !request.body.menu_id) return response.sendStatus(400);
+    await MenuItem.create({name: request.body.name, price: request.body.price, menu_id: request.body.menu_id});
+    response.sendStatus(201);
+});
+
+app.put("/restaurants", async (request, response) => {
+    if (!request.body.id) return response.sendStatus(400);
+    if (request.body.name) await Restaurant.update(
+        { name: request.body.name }, 
+        { where: { id: request.body.id } }
+    );
+
+    if (request.body.image) await Restaurant.update(
+        { image: request.body.image }, 
+        { where: { id: request.body.id } }
+    );
+    
+    response.sendStatus(201);
+});
+
+app.delete("/restaurants", async (request, response) => {
+    if (!request.body.id) return response.sendStatus(400);
+    const restaurant = await Restaurant.findByPk(request.body.id);
+    restaurant.destroy();
+    response.sendStatus(201);
 });
 
 app.listen(port, () => {
