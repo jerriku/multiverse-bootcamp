@@ -68,7 +68,10 @@ app.post('/restaurants', [
     check('image').trim().isURL()
     ], async (request, response) => {
         const errors = validationResult(request);
-        if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) {
+            console.log(errors.array());
+            return response.status(400).json({ errors: errors.array() })
+        };
         await Restaurant.create({name: request.body.name, image: request.body.image});
         response.sendStatus(201);
     }
@@ -84,7 +87,7 @@ app.post('/restaurants/:id/menus', [
     }
 )
 
-app.post("/restaurants/:id/menus/:menuid/items", [
+app.post("menus/:menuid/items", [
     check('name').trim().notEmpty().isLength({max: 50}),
     check('price').trim().isCurrency({allow_negatives: false})
     ], async (request, response) => {
@@ -95,13 +98,30 @@ app.post("/restaurants/:id/menus/:menuid/items", [
     }
 );
 
-app.patch("/restaurants/:id", async (request, response) => {
-        if (request.body.name) await Restaurant.update(
+app.patch("/restaurants/:id", [
+    check('name').trim().notEmpty().isLength({max: 50}).whitelist('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ').exists(),
+    check('image').trim().isURL().exists()
+    ], async (request, response) => {
+        if(!parseInt(request.params.id)) return response.sendStatus(400);
+
+        let nameExist = true;
+        let imageExist = true;
+        const errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            const allErrors = errors.array();
+            for (let i = 0; i < allErrors.length; i++) {
+                if (allErrors[i].param === "name") nameExist = false;
+                if (allErrors[i].param === "image") imageExist = false;
+            }
+            if (!nameExist && !imageExist) return response.status(400).json({ errors: allErrors });
+        }
+
+        if (nameExist) await Restaurant.update(
             { name: request.body.name }, 
             { where: { id: request.params.id } }
         );
 
-        if (request.body.image) await Restaurant.update(
+        if (imageExist) await Restaurant.update(
             { image: request.body.image }, 
             { where: { id: request.params.id } }
         );
@@ -110,13 +130,18 @@ app.patch("/restaurants/:id", async (request, response) => {
     }
 );
 
-app.patch("/restaurants/:id/menus/:menuid", async (request, response) => {
+app.patch("/restaurants/:id/menus/:menuid", [
+    check('title').trim().notEmpty().isLength({max: 50})
+    ], async (request, response) => {
+        if(!parseInt(request.params.id) || !parseInt(request.params.menuid)) return response.sendStatus(400);
+        const errors = validationResult(request);
+        if(!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
+
         if (request.body.title) await Menu.update(
             { title: request.body.title }, 
             { where: { id: request.params.menuid } }
         );
-        console.log("id", request.params.id);
-        console.log("menuid", request.params.menuid);
+        
         if (request.params.id) await Menu.update(
             { restaurant_id: request.params.id }, 
             { where: { id: request.params.menuid } }
@@ -126,13 +151,30 @@ app.patch("/restaurants/:id/menus/:menuid", async (request, response) => {
     }
 );
 
-app.patch("/restaurants/:id/menus/:menuid/menuitems/:itemid", async (request, response) => {
-    if (request.body.name) await MenuItem.update(
+app.patch("menus/:menuid/menuitems/:itemid", [
+    check('name').trim().notEmpty().isLength({max: 50}),
+    check('price').trim().isCurrency({allow_negatives: false})
+    ], async (request, response) => {
+    if(!parseInt(request.params.itemid) || !parseInt(request.params.menuid)) return response.sendStatus(400);
+    
+    let nameExist = true;
+    let priceExist = true;
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        const allErrors = errors.array();
+        for (let i = 0; i < allErrors.length; i++) {
+            if (allErrors[i].param === "name") nameExist = false;
+            if (allErrors[i].param === "image") priceExist = false;
+        }
+        if (!nameExist && !priceExist) return response.status(400).json({ errors: allErrors });
+    }
+
+    if (nameExist) await MenuItem.update(
         { title: request.body.name }, 
         { where: { id: request.params.itemid } }
     );
 
-    if (request.body.price) await MenuItem.update(
+    if (priceExist) await MenuItem.update(
         { price: request.body.price },
         { where: { id: request.params.itemid } }
     );
@@ -147,25 +189,28 @@ app.patch("/restaurants/:id/menus/:menuid/menuitems/:itemid", async (request, re
 );
 
 app.delete("/restaurants/:id", async (request, response) => {
-        const restaurant = await Restaurant.findByPk(request.params.id);
-        restaurant.destroy();
-        response.sendStatus(201);
-    }
-);
+    if(!parseInt(request.params.id)) return response.sendStatus(400);
+
+    const restaurant = await Restaurant.findByPk(request.params.id);
+    restaurant.destroy();
+    response.sendStatus(201);
+});
 
 app.delete("/menus/:id", async (request, response) => {
+    if(!parseInt(request.params.id)) return response.sendStatus(400);
+
     const menu = await Menu.findByPk(request.params.id);
     menu.destroy();
     response.sendStatus(201);
-}
-);
+});
 
 app.delete("/menuitems/:id", async (request, response) => {
-        const menuItem = await MenuItem.findByPk(request.params.id);
-        menuItem.destroy();
-        response.sendStatus(201);
-    }
-);
+    if(!parseInt(request.params.id)) return response.sendStatus(400);
+    
+    const menuItem = await MenuItem.findByPk(request.params.id);
+    menuItem.destroy();
+    response.sendStatus(201);
+});
 
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`)
