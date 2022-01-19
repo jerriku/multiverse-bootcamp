@@ -58,7 +58,7 @@ app.get("/restaurants", async (request, response) => {
     response.json(restaurants);
 });
 
-app.get("/restaurants/id=:id", async (request, response) => {
+app.get("/restaurants/:id", async (request, response) => {
     const restaurant = await Restaurant.findByPk(request.params.id, { include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
     response.json(restaurant);
 });
@@ -74,56 +74,95 @@ app.post('/restaurants', [
     }
 );
 
-app.post('/restaurants/menus', [
-    check('title').trim().notEmpty().isLength({max: 50}),
-    check('restaurant_id').trim().isInt()
+app.post('/restaurants/:id/menus', [
+    check('title').trim().notEmpty().isLength({max: 50})
     ], async (request, response) => {
-        console.log(request.body);
         const errors = validationResult(request);
         if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
-        await Menu.create({title: request.body.title, restaurant_id: request.body.restaurant_id});
+        await Menu.create({title: request.body.title, restaurant_id: request.params.id});
         response.sendStatus(201);
     }
 )
 
-app.post("/restaurants/menus/items", [
+app.post("/restaurants/:id/menus/:menuid/items", [
     check('name').trim().notEmpty().isLength({max: 50}),
-    check('price').trim().isCurrency({allow_negatives: false}),
-    check('menu_id').trim().isInt()
+    check('price').trim().isCurrency({allow_negatives: false})
     ], async (request, response) => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
-        await MenuItem.create({name: request.body.name, price: request.body.price, menu_id: request.body.menu_id});
+        await MenuItem.create({name: request.body.name, price: request.body.price, menu_id: request.params.menuid});
         response.sendStatus(201);
     }
 );
 
-app.put("/restaurants", [
-    check('id').trim().isInt()
-    ], async (request, response) => {
-        const errors = validationResult(request);
-        if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
+app.patch("/restaurants/:id", async (request, response) => {
         if (request.body.name) await Restaurant.update(
             { name: request.body.name }, 
-            { where: { id: request.body.id } }
+            { where: { id: request.params.id } }
         );
 
         if (request.body.image) await Restaurant.update(
             { image: request.body.image }, 
-            { where: { id: request.body.id } }
+            { where: { id: request.params.id } }
         );
         
         response.sendStatus(201);
     }
 );
 
-app.delete("/restaurants", [
-    check('id').trim().isInt()
-    ], async (request, response) => {
-        const errors = validationResult(request);
-        if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
-        const restaurant = await Restaurant.findByPk(request.body.id);
+app.patch("/restaurants/:id/menus/:menuid", async (request, response) => {
+        if (request.body.title) await Menu.update(
+            { title: request.body.title }, 
+            { where: { id: request.params.menuid } }
+        );
+        console.log("id", request.params.id);
+        console.log("menuid", request.params.menuid);
+        if (request.params.id) await Menu.update(
+            { restaurant_id: request.params.id }, 
+            { where: { id: request.params.menuid } }
+        );
+        
+        response.sendStatus(201);
+    }
+);
+
+app.patch("/restaurants/:id/menus/:menuid/menuitems/:itemid", async (request, response) => {
+    if (request.body.name) await MenuItem.update(
+        { title: request.body.name }, 
+        { where: { id: request.params.itemid } }
+    );
+
+    if (request.body.price) await MenuItem.update(
+        { price: request.body.price },
+        { where: { id: request.params.itemid } }
+    );
+
+    if (request.params.menuid) await MenuItem.update(
+        { menu_id: request.params.menuid }, 
+        { where: { id: request.params.itemid } }
+    );
+    
+    response.sendStatus(201);
+}
+);
+
+app.delete("/restaurants/:id", async (request, response) => {
+        const restaurant = await Restaurant.findByPk(request.params.id);
         restaurant.destroy();
+        response.sendStatus(201);
+    }
+);
+
+app.delete("/menus/:id", async (request, response) => {
+    const menu = await Menu.findByPk(request.params.id);
+    menu.destroy();
+    response.sendStatus(201);
+}
+);
+
+app.delete("/menuitems/:id", async (request, response) => {
+        const menuItem = await MenuItem.findByPk(request.params.id);
+        menuItem.destroy();
         response.sendStatus(201);
     }
 );
