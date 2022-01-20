@@ -54,12 +54,32 @@ app.get("/flipcoin", (request, response) => {
 });
 
 app.get("/restaurants", async (request, response) => {
-    const restaurants = await Restaurant.findAll({ include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
+    const restaurants = await Restaurant.findAll();
     response.json(restaurants);
 });
 
 app.get("/restaurants/:id", async (request, response) => {
-    const restaurant = await Restaurant.findByPk(request.params.id, { include: { model: Menu, as: 'menus', include: { model: MenuItem, as: 'items' } } });
+    const restaurant = await Restaurant.findByPk(request.params.id);
+    response.json(restaurant);
+});
+
+app.get("/menus", async (request, response) => {
+    const restaurants = await Restaurant.findAll();
+    response.json(restaurants);
+});
+
+app.get("/menus/:id", async (request, response) => {
+    const restaurant = await Restaurant.findByPk(request.params.id);
+    response.json(restaurant);
+});
+
+app.get("/menuitems", async (request, response) => {
+    const restaurants = await Menu.findAll();
+    response.json(restaurants);
+});
+
+app.get("/menuitems/:id", async (request, response) => {
+    const restaurant = await Restaurant.findByPk(request.params.id);
     response.json(restaurant);
 });
 
@@ -206,7 +226,7 @@ app.delete("/menus/:id", async (request, response) => {
 
 app.delete("/menuitems/:id", async (request, response) => {
     if(!parseInt(request.params.id)) return response.sendStatus(400);
-    
+
     const menuItem = await MenuItem.findByPk(request.params.id);
     menuItem.destroy();
     response.sendStatus(201);
