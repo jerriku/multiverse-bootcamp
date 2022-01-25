@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require('express');
 const { sequelize } = require('./sequelize/sequelize_index');
 const { Restaurant } = require('./sequelize/classes/Restaurant');
@@ -7,7 +8,7 @@ const { check, validationResult } = require('express-validator');
 const fs = require('fs').promises;
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 const load = async() => {
     const buffer = await fs.readFile('./restaurants.json');
@@ -37,21 +38,13 @@ const load = async() => {
 load()
 .catch(error => console.error(error.message));
 
-app.use(express.static('src'));
-
+//app.use(express.static('src'));
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.json());
-
-app.get("/now", (request, response) => {
-    const date = new Date();
-    response.send(date);
-});
-
-app.get("/flipcoin", (request, response) => {
-    const fiftyFifty = Math.floor(Math.random() * 2) + 1;
-    response.send(fiftyFifty > 1 ? "heads" : "tails");
-});
 
 app.get("/restaurants", async (request, response) => {
     const restaurants = await Restaurant.findAll();
@@ -63,9 +56,19 @@ app.get("/restaurants/:id", async (request, response) => {
     response.json(restaurant);
 });
 
+app.get("/restaurants/:id/menus", async (request, response) => {
+    const restaurant = await Restaurant.findByPk(request.params.id, {include: {model: Menu, as: 'menus'}});
+    response.json(restaurant);
+});
+
+app.get("/menus/:id/menuitems", async (request, response) => {
+    const menu = await Menu.findByPk(request.params.id, {include: {model: MenuItem, as: 'items'}});
+    response.json(menu);
+});
+
 app.get("/menus", async (request, response) => {
-    const restaurants = await Restaurant.findAll();
-    response.json(restaurants);
+    const menus = await Menu.findAll();
+    response.json(menus);
 });
 
 app.get("/menus/:id", async (request, response) => {
@@ -107,7 +110,7 @@ app.post('/restaurants/:id/menus', [
     }
 )
 
-app.post("menus/:menuid/items", [
+app.post("menus/:menuid/menuitems", [
     check('name').trim().notEmpty().isLength({max: 50}),
     check('price').trim().isCurrency({allow_negatives: false})
     ], async (request, response) => {
@@ -217,6 +220,7 @@ app.delete("/restaurants/:id", async (request, response) => {
 });
 
 app.delete("/menus/:id", async (request, response) => {
+    console.log(request.param.id);
     if(!parseInt(request.params.id)) return response.sendStatus(400);
 
     const menu = await Menu.findByPk(request.params.id);

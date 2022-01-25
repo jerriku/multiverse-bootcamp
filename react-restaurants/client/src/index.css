@@ -1,0 +1,162 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --card-height: 400px;
+  --card-width: 700px;
+}
+/*
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+*/
+.restaurant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: -webkit-sticky;
+  position: sticky;
+  height: 80px;
+  top: 0;
+  z-index: 999;
+  background-color: #23272A;
+}
+
+.restaurant-header h1 {
+  text-align: center;
+  font-size: 3rem;
+  width: 400px;
+  color: #fff;
+}
+
+.nav-bar { width: 700px; }
+
+.nav-menu {
+  display: flex;
+  justify-content: space-evenly;
+  list-style: none;
+}
+
+.nav-item button {
+  height: 50px;
+  width: 150px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border-radius: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 78vw;
+  min-width: 800px;
+}
+
+.restaurant-card {
+  margin: 100px 0;
+  perspective: 1000px;
+  background-color: transparent;
+  height: var(--card-height);
+  width: var(--card-width);
+}
+
+.inner-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.front-card, .back-card {
+  position: absolute;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.restaurant-content {
+  height: var(--card-height);
+  width: var(--card-width);
+  cursor: pointer;
+}
+
+.restaurant-content div {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+}
+
+.restaurant-content h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 2rem;
+  width: 25rem;
+  color: #fff;
+  background-color: #23272A;
+}
+
+.restaurant-content img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  border-radius: 20px;
+  filter: blur(5px);
+}
+
+.restaurant-details {
+  height: 100%;
+  width: 100%;
+  background-color:#23272A;
+  color: #fff;
+  border-radius: 20px;
+  z-index: -10;
+}
+
+.restaurant-card:hover .restaurant-image {
+  animation-duration: 1s;
+  animation-name: blurout;
+  filter: none;
+}
+
+.flip-card {
+  transform: rotateY(180deg);
+}
+
+@keyframes blurout {
+  from {
+    filter: blur(5px);
+  }
+
+  to {
+    filter: none;
+  }
+}
+
+.restaurant-details {
+  overflow-y: auto;
+}
+
+.menu-title {
+  cursor: pointer;
+}
+
+.help-user {
+  text-decoration: underline;
+}
+
+.item-input {
+  width: 20rem;
+}
