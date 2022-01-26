@@ -33,7 +33,10 @@ class AddRestaurant extends React.Component {
 
         axios
             .post("http://localhost:8080/restaurants", restaurant)
-            .then(() => console.log('restaurant created'))
+            .then(() => {
+                alert('restaurant created');
+                window.location.href = "/";
+            })
             .catch(err => console.log(err.message));
     }
 

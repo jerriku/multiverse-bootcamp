@@ -6,7 +6,8 @@ function EditMenu() {
     const [items, setItems] = useState([]);
     const [menu, setMenu] = useState("");
     const [isMount, setIsMount] = useState(false);
-    const [state, setState] = useState({ itemName: "", itemPrice: 0 });
+    const [itemName, setItemName] = useState("");
+    const [itemPrice, setItemPrice] = useState(0);
     const menuId = useLocation().state.id;
     let itemNumber = 0;
 
@@ -23,26 +24,30 @@ function EditMenu() {
         }
     });
 
-    function handleInputChange(event) {
-        setState({ [event.target.name]: event.target.value });
+    function handleNameChange(event) {
+        setItemName(event.target.value);
+    }
+
+    function handlePriceChange(event) {
+        setItemPrice(event.target.value);
     }
 
     function handleEdit(event) {
         event.preventDefault();
-        const name = state.itemName;
-        const price = state.itemName;
-        const id = event.target.lastChild.value;
+        const itemid = event.target.lastChild.value;
 
         const item = {
-            name,
-            price,
+            name: itemName,
+            price: parseFloat(itemPrice),
         }
 
+        console.log(item);
+
         axios
-            .patch(`menus/${menuId}/menuitems/${id}`, item)
+            .patch(`http://localhost:8080/menus/${menuId}/menuitems/${itemid}`, item)
             .then(() => {
-                console.log('item edited');
-                window.location.href = "/editmenu";
+                alert('item edited');
+                window.location.href = "/";
             })
             .catch(err => console.log(err.message));
     }
@@ -54,7 +59,7 @@ function EditMenu() {
         axios
             .delete(`http://localhost:8080/menus/${id}`)
             .then(() => {
-                console.log('menu deleted');
+                alert('menu deleted');
                 document.getElementById(`${menu}-menu`).remove();
                 window.location.href = "/";
             })
@@ -68,9 +73,9 @@ function EditMenu() {
         axios
             .delete(`http://localhost:8080/menuitems/${id}`)
             .then(() => {
-                console.log('item deleted');
+                alert('item deleted');
                 document.getElementById(`item-${id}`).remove();
-                window.location.href = "/editmenu";
+                window.location.href = "/";
             })
             .catch(err => console.log(err.message));
     }
@@ -85,9 +90,9 @@ function EditMenu() {
                         <form id={`item-${item.id}`} onSubmit={handleEdit}>
                             <h2>Item {itemNumber}</h2> <br />
                             <label htmlFor="itemName">Item name:</label> <br />
-                            <input className="item-input" name="itemName" placeholder={item.name} onChange={handleInputChange}/> <br />
+                            <input className="item-input" name="itemName" placeholder={item.name} onChange={handleNameChange}/> <br />
                             <label htmlFor="itemPrice">Price:</label> <br />
-                            <input className="item-input" name="itemPrice" placeholder={item.price} onChange={handleInputChange}/> <br />
+                            <input className="item-input" name="itemPrice" placeholder={item.price} onChange={handlePriceChange}/> <br />
                             <input type="submit" value="Submit Edit"/> <button value={item.id} onClick={handleDeleteItem}>Delete Item</button>
                         </form>
                     )

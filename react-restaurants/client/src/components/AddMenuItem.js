@@ -44,8 +44,11 @@ class AddMenuItem extends React.Component {
         }
 
         axios
-            .post(`http://localhost:8080/menus/${menu_id}/items`, menuItem)
-            .then(() => console.log('menu item created'))
+            .post(`http://localhost:8080/menus/${menu_id}/menuitems`, menuItem)
+            .then(() => {
+                alert('menu item created');
+                window.location.href = "/";
+            })
             .catch(err => console.log(err.message));
     }
 

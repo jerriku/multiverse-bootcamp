@@ -42,7 +42,10 @@ class AddMenu extends React.Component {
 
         axios
             .post(`http://localhost:8080/restaurants/${restaurant_id}/menus`, menu)
-            .then(() => console.log('menu created'))
+            .then(() => {
+                alert('menu created');
+                window.location.href = "/";
+            })
             .catch(err => console.log(err.message));
     }
 
@@ -51,8 +54,8 @@ class AddMenu extends React.Component {
             <div>
                 <h1>Add Menu</h1>
                 <form onSubmit={this.handleSubmit}>
-                    <label htmlFor="rId" >Choose a Restaurant:</label> <br />
                     <select name="rId" onChange={this.handleInputChange} >
+                        <option> Choose a Restaurant: </option>
                         {
                             this.state.restaurants.map(restaurant => {
                                 return (

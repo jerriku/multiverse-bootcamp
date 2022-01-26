@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import Menu from './Menu';
 
@@ -20,11 +21,45 @@ class Restaurant extends React.Component {
         this.fetchAPI();
     }
 
+    handleDeleteItem(event) {
+        event.preventDefault();
+        const id = parseInt(event.target.value);
+        
+        axios
+            .delete(`http://localhost:8080/restaurants/${id}`)
+            .then(() => {
+                alert('restaurant deleted');
+                document.getElementById(`restaurant-${id}`).remove();
+                window.location.href = "/";
+            })
+            .catch(err => console.log(err.message));
+    }
+
     render() {
         function flipFront(event) {
-            console.log(event.target);
-            const card = event.target.offsetParent;
+            
+            const rId = event.currentTarget.id.replace(/\D+/g, '');
+
+            setTimeout(() => {
+                const title = document.getElementById(`restaurant-name-${rId}`);
+                title.classList.add('hidden');
+            }, 0);
+
+            const card = document.getElementById(`inner-card-${rId}`);
             card.classList.add('flip-card');
+        }
+
+        function flipBack(event) {
+
+            const rId = event.currentTarget.id.replace(/\D+/g, '');
+            
+            setTimeout(() => {
+                const title = document.getElementById(`restaurant-name-${rId}`);
+                title.classList.remove('hidden');
+            }, 0);
+
+            const card = document.getElementById(`inner-card-${rId}`);
+            card.classList.remove('flip-card');
         }
 
 
@@ -32,16 +67,18 @@ class Restaurant extends React.Component {
             <div className="content">
             {
                 this.state.restaurants.map(restaurant => {
-                    const menus = restaurant.menus;
-                    console.log(menus);
                     return(
-                        <div key={restaurant.id} id={restaurant.id} className="restaurant-card">
-                        <div className="inner-card">
-                            <section className="front-card restaurant-content" onClick={flipFront}>
-                                <div><h1>{restaurant.name}</h1></div>
+                        <div key={restaurant.id} id={`restaurant-${restaurant.id}`} className="restaurant-card" onClick={flipFront} onMouseLeave={flipBack}>
+                        <div id={`inner-card-${restaurant.id}`} className="inner-card">
+                            <section className="front-card restaurant-content">
+                                <div id={`restaurant-name-${restaurant.id}`} className="never-rotate"><h1>{restaurant.name}</h1></div>
                                 <img className="restaurant-image" alt="restaurant" src={restaurant.image}/>
                             </section>
                             <section className="back-card restaurant-details">
+                                <div>
+                                    <h2>Menus</h2>
+                                    <button value={restaurant.id} onClick={this.handleDeleteItem}>Delete Restaurant</button>
+                                </div>
                                 <Menu id={restaurant.id} />
                             </section>
                         </div>

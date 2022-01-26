@@ -25,7 +25,6 @@ class Menu extends React.Component {
     render() {
         return(
             <div className="menu-content">
-                <h2>Menus</h2>
                 {
                     this.state.menus.map(menu => {
                         return (
