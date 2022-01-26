@@ -110,9 +110,9 @@ app.post('/restaurants/:id/menus', [
     }
 )
 
-app.post("menus/:menuid/menuitems", [
+app.post("/menus/:menuid/menuitems", [
     check('name').trim().notEmpty().isLength({max: 50}),
-    check('price').trim().isCurrency({allow_negatives: false})
+    check('price').trim().isFloat()
     ], async (request, response) => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) return response.status(400).json({ errors: errors.array() });
@@ -174,9 +174,9 @@ app.patch("/restaurants/:id/menus/:menuid", [
     }
 );
 
-app.patch("menus/:menuid/menuitems/:itemid", [
+app.patch("/menus/:menuid/menuitems/:itemid", [
     check('name').trim().notEmpty().isLength({max: 50}),
-    check('price').trim().isCurrency({allow_negatives: false})
+    check('price').trim().isFloat()
     ], async (request, response) => {
     if(!parseInt(request.params.itemid) || !parseInt(request.params.menuid)) return response.sendStatus(400);
     
@@ -186,14 +186,17 @@ app.patch("menus/:menuid/menuitems/:itemid", [
     if (!errors.isEmpty()) {
         const allErrors = errors.array();
         for (let i = 0; i < allErrors.length; i++) {
+            console.log(request.body.name);
+            console.log(allErrors[i].param);
             if (allErrors[i].param === "name") nameExist = false;
-            if (allErrors[i].param === "image") priceExist = false;
+            if (allErrors[i].param === "price") priceExist = false;
         }
+        console.log({nameExist: nameExist, priceExist: priceExist});
         if (!nameExist && !priceExist) return response.status(400).json({ errors: allErrors });
     }
 
     if (nameExist) await MenuItem.update(
-        { title: request.body.name }, 
+        { name: request.body.name }, 
         { where: { id: request.params.itemid } }
     );
 
@@ -214,7 +217,19 @@ app.patch("menus/:menuid/menuitems/:itemid", [
 app.delete("/restaurants/:id", async (request, response) => {
     if(!parseInt(request.params.id)) return response.sendStatus(400);
 
-    const restaurant = await Restaurant.findByPk(request.params.id);
+    const restaurant = await Restaurant.findByPk(request.params.id, {include: {model: Menu, as: 'menus', include: {model: MenuItem, as: 'items'}}});
+    const menus = restaurant.menus;
+    for (let i = 0; i < menus.length; i++){
+        const destroyMenu = await Menu.findByPk(menus[i].id);
+        console.log(menus[i]);
+        const menuItems = menus[i].items;
+        for (let j = 0; j < menuItems.length; j++) {
+            console.log(menuItems[j]);
+            const destroyItem = await MenuItem.findByPk(menuItems[j].id);
+            destroyItem.destroy();
+        }
+        destroyMenu.destroy();
+    }
     restaurant.destroy();
     response.sendStatus(201);
 });
